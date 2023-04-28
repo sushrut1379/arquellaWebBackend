@@ -2,7 +2,7 @@
 var mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-
+//monggods mocdel
 const userSchema = new Schema({
     userName: { type: String, required: true },
     lastName: { type: String, },
