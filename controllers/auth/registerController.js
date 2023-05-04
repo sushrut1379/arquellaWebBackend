@@ -34,7 +34,7 @@ const registerController = {
             console.log("new user +++*****+", email, hashedPassword)
             await sequelize
                 .sync({ force: false })
-                // .sync()
+                //   .sync()
                 .then((result) => {
                     User.create({ email: email, password: hashedPassword, role:role });
                     access_token = JwtService.sign({ _id: result.id, role: result.role });
