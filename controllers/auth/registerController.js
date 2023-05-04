@@ -7,6 +7,7 @@ const JwtService = require('../../service/jwtService')
 const bcrypt = require('bcrypt')
 
 const registerController = {
+    //test commit
     async register(req, res, next) {
         console.log('register body', req.body)
         console.log('email form body', req.body.email)
