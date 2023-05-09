@@ -11,7 +11,6 @@ const RefreshToken = sequelize.define("refreshToken", {
         autoIncrement: true,
         allowNull: false,
         primaryKey: true,
-        
     },
     userId: {
         type: Sequelize.STRING,
@@ -20,14 +19,18 @@ const RefreshToken = sequelize.define("refreshToken", {
     email: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
     },
     refreshToken: {
         type: Sequelize.STRING,
         allowNull: false,
         unique:true
     }
-});
+    }, {
+        tableName: 'RefreshTokens'
+    }
+);
 
 
 
-module.exports = { RefreshToken };
+module.exports =  RefreshToken ;

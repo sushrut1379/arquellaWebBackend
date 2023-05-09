@@ -1,10 +1,11 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize } = require('sequelize');
 
 //sequalize ...........
-const sequelize = new Sequelize('sushrut', 'testuser', 'testuser', {
-    host: '35.205.100.172',
-    dialect:  'mysql' ,
-  });
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  logging: false,
+  dialect: 'mysql'
+});
   
   try {
    sequelize.authenticate();

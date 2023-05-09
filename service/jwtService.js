@@ -1,13 +1,12 @@
 
 const jwt = require('jsonwebtoken')
-const JWT_SECRET="sushrutmahajan"
 
 class JwtService {
-    static sign(payload, expiry = '60sec', secret = JWT_SECRET) {
+    static sign(payload, expiry = '60sec', secret = process.env.JWT_SECRET) {
         return jwt.sign(payload, secret, { expiresIn: expiry });
     }
 
-    static verify(token, secret = JWT_SECRET) {
+    static verify(token, secret = process.env.JWT_SECRET) {
         return jwt.verify(token, secret);
     }
 }

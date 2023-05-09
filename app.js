@@ -1,37 +1,24 @@
+//Config- should always be imported first
+const dotenv = require('dotenv')
+dotenv.config({ path: "config/config.env" })
+
 const express = require('express');
 const router = express.Router();
 const app = express();
-const sequelize = require("./DataBase/dataBase");
-const RefreshToken = require('./models/refreshTokenModel')
-const User = require ('./models/modalsArquella')
 
 
 
 // const bodyParser = require('body-Parser');
-var mongoose = require('mongoose');
 const mainRouter = require('./api/route/main');
 const authRouter = require("./api/route/auth");
-const manageUserRouter = require("./api/route/manageUser");
 const careGroupCareHomeControllerRouter = require('./api/CareGroupAndHomeRoute/careGroupAndHomeRoute');
-
+const callRoute = require('./api/callRoute/callRoute');
 var cors = require('cors');
-
-
-mongoose.set('strictQuery', false);
-mongoose.connect("mongodb+srv://sushrutmahajan:Sushrut123@cluster0.2wvkj.mongodb.net/?retryWrites=true&w=majority", { useNewUrlParser: true });
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-//console.log(db.on('error', console.error.bind(console, 'connection error:')))
-db.once('open', () => {
-  console.log('DB connected...!!!!!!!!!');
-});
 
 // User.sync({ force : false });
 // RefreshToken.sync({ force : false });
 
-sequelize.sync({ force: false }).then(() => {
-  console.log('Table synchronized ***');
-});
+
 
 
 // app.use(bodyParser.urlencoded({ extended: true }));
@@ -57,8 +44,9 @@ router.get("/", (req, res) => {
 
 app.use('/main', mainRouter);
 app.use('/auth', authRouter);
-app.use('/users', manageUserRouter);
 app.use('/care', careGroupCareHomeControllerRouter);
+app.use('/call', callRoute);
+
 
 
 
