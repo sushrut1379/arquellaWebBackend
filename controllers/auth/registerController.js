@@ -92,6 +92,7 @@ const registerController = catchAsyncErrors(async (req, res, next) => {
         managerEmail:userEmailAddress
     }).catch(err => {
         if (err) {
+            console.log('error ' , err);
             User.destroy({ where: { email: userEmailAddress } })
             CareGroup.destroy({ where: { email: careGroupEmail } })
             throw next(new ErrorHandler('There\'s an issue in Care home fields', 400))

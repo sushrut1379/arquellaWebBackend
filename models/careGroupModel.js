@@ -19,7 +19,7 @@ const CareGroup = sequelize.define('caregroup', {
     },
     email: {
         type: DataTypes.STRING,
-        unique: true,
+        // unique: true,
         allowNull: false,
         validate: {
             isEmail: {
@@ -29,7 +29,7 @@ const CareGroup = sequelize.define('caregroup', {
     },
     mobile: {
         type: DataTypes.STRING,
-        unique: true,
+        // unique: true,
         allowNull: false,
         validate: {
           len: {

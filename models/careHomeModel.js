@@ -21,7 +21,7 @@ const CareHome = sequelize.define('carehome', {
 	},
     email: {
         type: DataTypes.STRING,
-        unique: true,
+        // unique: true,
         allowNull: false,
         validate: {
             isEmail: {
@@ -31,7 +31,7 @@ const CareHome = sequelize.define('carehome', {
     },
     mobile: {
         type: DataTypes.STRING,
-        unique: true,
+        // unique: true,
         allowNull: false,
         validate: {
           len: {
@@ -62,6 +62,11 @@ const CareHome = sequelize.define('carehome', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+
+    managerEmail: {
+        type: DataTypes.STRING
+    },
+    
     }, {
         tableName: 'CareHomes'
     }
