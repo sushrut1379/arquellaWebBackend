@@ -19,6 +19,7 @@ const getUsers = catchAsyncErrors(async (req, res, next) => {
     // }
 
     const careGroups = await CareGroup.findAll({ include: User });
+    const careHomesWithUsers = await User.findAll({ include: CareHome })
     
     const users = await User.findAll({ include: CareGroup }).catch(err => {
         if (err) {
@@ -32,9 +33,10 @@ const getUsers = catchAsyncErrors(async (req, res, next) => {
 
     
     res.status(200).json({
-        message: 'user Data with caregroups',
-        data:  users,
-        careGroup: careGroups
+        message: ' Data Arquella',
+        userData:  users,
+        careGroup: careGroups ,
+        usereWithCareHomes:careHomesWithUsers
        
     })
 

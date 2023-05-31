@@ -94,8 +94,8 @@ const addCallController =
             // if (err) {
             //     User.destroy({ where: { email: userEmailAddress } })
             // }
-            throw next(new ErrorHandler('There\'s an issue in callmodel modelfields', 500))
-        })
+            ErrorHandler.handleSequelizeError(err);
+            throw next(new ErrorHandler(ErrorHandler.handleSequelizeError(err).getErrorMessage, ErrorHandler.handleSequelizeError(err).getStatusCode),);        })
 
 
         console.log('call controller hitted', req.user);

@@ -13,6 +13,8 @@ const mainRouter = require('./api/route/main');
 const authRouter = require("./api/route/auth");
 const careGroupCareHomeControllerRouter = require('./api/CareGroupAndHomeRoute/careGroupAndHomeRoute');
 const callRoute = require('./api/callRoute/callRoute');
+const engineerRoute = require('./api/configurationRoute/engineerRoute');
+
 var cors = require('cors');
 
 // User.sync({ force : false });
@@ -27,8 +29,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors())
 router.get("/", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://fuzzy-getup-moth.cyclic.app")
   res.setHeader("Access-Control-Allow-Origin", "*")
+  res.setHeader("Access-Control-Allow-Origin", "http://eov.arquel.la/")
+  res.setHeader("Access-Control-Allow-Origin", "https://eov.arquel.la/")
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173")
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Max-Age", "1800");
   res.setHeader("Access-Control-Allow-Headers", "content-type");
@@ -46,6 +50,7 @@ app.use('/main', mainRouter);
 app.use('/auth', authRouter);
 app.use('/care', careGroupCareHomeControllerRouter);
 app.use('/call', callRoute);
+app.use('/config', engineerRoute);
 
 
 

@@ -1,7 +1,7 @@
 
 
 module.exports = (sequelize, DataTypes) => {
-    const applicationUsers_careGroups = sequelize.define('applicationUsers_careGroup', {
+    const applicationUsers_careHomes = sequelize.define('applicationUsers_careHomes', {
         applicationUsers_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -10,23 +10,23 @@ module.exports = (sequelize, DataTypes) => {
                 key: 'id',
             },
         },
-        careGroup_id: {
+        careHomes_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'careGroups', // Replace with the actual table name for Group model
+                model: 'careHomes', // Replace with the actual table name for Group model
                 key: 'id',
             },
         },
     },
         {
             sequelize,
-            modelName: 'applicationUsers_careGroup',
+            modelName: 'applicationUsers_careHomes',
             timestamps: false, // Disable timestamps for junction tables
         },
         // {
         //     tableName: 'applicationUser_careGroup'
         // }
     )
-    return applicationUsers_careGroups
+    return applicationUsers_careHomes
 }

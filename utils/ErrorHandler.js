@@ -15,6 +15,7 @@ class ErrorHandler extends Error {
         let errorMessage;
         //custom error object imported from utils folderr
         errorMessageFromDataBase
+        
 
         if (err.errors && Object.keys(err.errors).length > 0) {
             const field = Object.values(err.errors)[0];
@@ -24,10 +25,17 @@ class ErrorHandler extends Error {
             columnName = 'Unknown';
             errorMessage = err.message;
         }
+        console.log("lkllkllkj" , err.errors);
 
+        
         let newError = {
             ...errorMessageFromDataBase,
             errorFromDataBase:`Error occurred in column '${columnName}': ${errorMessage}`
+        }
+        
+        if (err.errors === undefined) {
+            columnName=errorMessage
+            console.log("sett cloumm neame" , columnName);
         }
 
         console.log("erromr massage +-*--+",newError.errorFromDataBase);

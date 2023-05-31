@@ -1,0 +1,250 @@
+
+const catchAsyncErrors = require("../../middlewares/catchAsyncErrors");
+const db = require('../../models');
+const ErrorHandler = require("../../utils/ErrorHandler");
+const CareGroup = db.careGroup;
+const CareHome = db.careHome;
+const androidLicense = db.androidLicense;
+const User = db.user;
+const applicationUserRoleModel = db.applicationUserRoleModel;
+const applicationUser_applicationUserRole = db.applicationUser_applicationUserRole;
+
+
+
+// request body for set license androide
+// {
+//     "careGroup_id": "1",
+//     "careHomes_id": "1",
+//     "androidLicense_id": "1wees1a:z2",
+//     "site_ID":1,
+//     "active_subscription": "false",
+//     "config_location": "united kingdome",
+//     "api_endpoint": "/arquella"
+// }
+
+const setAndroideLicenseController = catchAsyncErrors(async (req, res, next) => {
+
+    let user = req.user;
+    const currentDate = new Date();
+    let {
+        careGroup_id,
+        careHomes_id,
+        androidLicense_id,
+        site_ID,
+        active_subscription,
+        config_location,
+        api_endpoint
+    } = req.body;
+
+    console.log("block runni++++n engg config cntroller", req.body, user);
+
+
+
+    let careGroup = await CareGroup.findByPk(careGroup_id);
+    let careHome = await CareHome.findByPk(careHomes_id);
+    // let applicationUserfromDb = await User.findAll( { include: applicationUserRoleModel });
+
+    // const userfromApplicationDb = await User.findOne({
+    //     where: { user_email_address: user.email },
+    //     include: [{ model: applicationUserRoleModel }],
+    //     attributes: {
+    //         exclude: ['password',] // Specify the properties to exclude from the response
+    //     } // Replace AssociationModel with the actual associated model
+    // });
+
+    async function checkIfEngg(userId, enggKey) {
+        try {
+            const checkEngg = await applicationUser_applicationUserRole.findOne({
+                where: {
+                    applicationUsers_id: userId,
+                    applicationUsersRole_id: enggKey
+                }
+            });
+
+            if (checkEngg) {
+                console.log('user is  autharise for this service', checkEngg);
+
+                if (careGroup === null) {
+                    throw next(new ErrorHandler('Care Group name is not present in DataBasse', 500))
+                } else {
+                    console.log("care group", careGroup instanceof CareGroup); // true
+                    console.log(careGroup.dataValues.id, careGroup.dataValues.care_group_name); // 'My Title'
+                }
+
+                if (careHome === null) {
+                    throw next(new ErrorHandler('Care Home name is not present in Database', 500))
+                } else {
+                    console.log("care group", careHome instanceof CareHome); // true
+                    console.log(careHome.dataValues.id, careHome.dataValues.care_home_name); // 'My Title'
+                }
+
+                const maxPrimaryKeyandroidLicense = await androidLicense.max('id');
+                const newPrimaryKeyandroidLicense = (maxPrimaryKeyandroidLicense || 0) + 1;
+
+                let setAndroideLicesnse = await androidLicense.create({
+                    id: newPrimaryKeyandroidLicense,
+                    careGroup_id,
+                    careHomes_id,
+                    androidLicense_id,
+                    issue_date: currentDate,
+                    site_ID,
+                    active_subscription,
+                    config_location,
+                    api_endpoint,
+                    applicationUsers_id: user._id
+
+
+                }).catch(err => {
+
+                    if (err) {
+                        console.log('err in androidLicense if', err);
+                        //this step get us sequalise error statuse code and type of error
+                        ErrorHandler.handleSequelizeError(err);
+                        // throw next(new ErrorHandler('There\'s an issue in Care group fields'+err.parent, 400))
+                        throw next(new ErrorHandler(ErrorHandler.handleSequelizeError(err).getErrorMessage, ErrorHandler.handleSequelizeError(err).getStatusCode));
+                    }
+                })
+
+            } else {
+                console.log('User role is not a engineer', checkEngg);
+                throw next(new ErrorHandler('user is not autharise for this service only engineer can acesess this', 500))
+
+
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    //below function chech user role that is, user has engineer or not if not return response 
+    await checkIfEngg(user._id, 4);
+
+
+    // console.log("user ......" , userfromApplicationDb.dataValues);
+
+
+
+
+    res.status(200).json({
+        message: 'androide license created sucessfully'
+    })
+
+})
+
+
+// request body for getLicense detal
+// {"androidLicense_id": "1wees1a:z2",}
+
+const getAndroideLicenseController = catchAsyncErrors(async (req, res, next) => {
+
+    let user = req.user;
+    const currentDate = new Date();
+    let {
+        careGroup_id,
+        careHomes_id,
+        androidLicense_id,
+        site_ID,
+        active_subscription,
+        config_location,
+        api_endpoint
+    } = req.body;
+    console.log("get licne hite");
+
+    const androidLicenseRes = await androidLicense.findAll({ include: User }).catch(err => {
+        if (err) {
+            console.log('err in get androidLicense if', err);
+            //this step get us sequalise error statuse code and type of error
+            ErrorHandler.handleSequelizeError(err);
+            // throw next(new ErrorHandler('There\'s an issue in Care group fields'+err.parent, 400))
+            throw next(new ErrorHandler(ErrorHandler.handleSequelizeError(err).getErrorMessage, ErrorHandler.handleSequelizeError(err).getStatusCode));
+        }
+    })
+
+    const androidLicenseByLicenseIdRes = await androidLicense.findOne({
+        where: { androidLicense_id: androidLicense_id},
+        include: [{ model: User}], // Replace AssociationModel with the actual associated model
+        attributes: {
+            exclude: ['password'] // Specify the properties to exclude from the response
+        }
+    }).catch(err => {
+        if (err) {
+            console.log('err in get androidLicense if', err);
+            //this step get us sequalise error statuse code and type of error
+            ErrorHandler.handleSequelizeError(err);
+            // throw next(new ErrorHandler('There\'s an issue in Care group fields'+err.parent, 400))
+            throw next(new ErrorHandler(ErrorHandler.handleSequelizeError(err).getErrorMessage, ErrorHandler.handleSequelizeError(err).getStatusCode));
+        }
+    })
+
+    console.log("andro license" ,androidLicenseByLicenseIdRes );
+
+    const startDate = new Date(androidLicenseByLicenseIdRes.dataValues.issue_date); // Replace with your start date
+    const endDate = new Date(currentDate); // Replace with your end date
+  
+    const monthsDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (endDate.getMonth() - startDate.getMonth());
+    const daysDiff = endDate.getDate() - startDate.getDate();
+    console.log("date diff" , daysDiff , monthsDiff);
+    let newresponse ={};
+    if (monthsDiff>12) {
+         newresponse = await {... androidLicenseByLicenseIdRes.dataValues,
+            active_subscription:false
+        
+        }
+        console.log("new obj", newresponse);
+        
+    }else{
+        newresponse = androidLicenseByLicenseIdRes
+    }
+
+
+
+    res.status(200).json({
+        message: 'androide license created sucessfully',
+        androidLicense: newresponse
+    })
+
+})
+
+
+
+// rquest body for adduereRole
+// {"applicationUser_Role":"user"}
+const addUserRole = catchAsyncErrors(async (req, res, next) => {
+
+    let applicationUser_Role = req.body.applicationUser_Role;
+
+    const maxPrimaryKey = await applicationUserRoleModel.max('id');
+    const newPrimaryKey = (maxPrimaryKey || 0) + 1;
+
+
+    let applicationUserRole = await applicationUserRoleModel.create({
+        id: newPrimaryKey,
+        user_role: applicationUser_Role
+    }).catch(err => {
+        console.log('err in applicationUserRole ', err);
+
+        if (err) {
+            console.log('err in applicationUserRole if', err);
+            throw next(new ErrorHandler('There\'s an issue in applicationUserRole fields' + err.parent, 400))
+        }
+    })
+
+
+
+    res.status(200).json({
+        message: 'userRole add in applicationUsersRole table sucessfully',
+        applicationUserRole: applicationUserRole
+
+    })
+
+})
+
+
+
+
+
+
+
+
+module.exports = { setAndroideLicenseController, getAndroideLicenseController, addUserRole };

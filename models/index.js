@@ -24,23 +24,17 @@ db.careGroup = require('./careGroupModel')(sequelize, DataTypes)
 db.careHome = require('./careHomeModel')(sequelize, DataTypes)
 db.refreshToken = require('./refreshTokenModel')(sequelize, DataTypes)
 db.callHistory = require('./callModels/callModel')(sequelize, DataTypes)
-db.applicationUser_careGroups = require('./relationShipsTable/applicationUser_careGroupModel')(sequelize, DataTypes)
-
-
-//one to  many between application user and caregroups
-// db.user.hasOne(db.careGroup, {
-//     foreignKey: "applicationUsers_id"
-// })
-
-// db.careGroup.belongsTo(db.user, {
-//     foreignKey: "applicationUsers_id"
-// })
+db.androidLicense = require('./careHomeSystemModels/androideLicenseModel')(sequelize, DataTypes)
+db.applicationUserRoleModel = require('./applicationUserRoleModel/applicationUserRoleModel')(sequelize, DataTypes)
+db.applicationUsers_careGroups = require('./relationShipsTable/applicationUser_careGroupModel')(sequelize, DataTypes)
+db.applicationUsers_careHomes = require('./relationShipsTable/applicationUsers_careHomeModel')(sequelize, DataTypes)
+db.applicationUser_applicationUserRole = require('./relationShipsTable/applicationUser_applicationUserRole')(sequelize, DataTypes)
 
 
 //many to many between application users and caregroups
 // In User model
 db.user.belongsToMany(db.careGroup, {
-    through: db.applicationUser_careGroups,
+    through: db.applicationUsers_careGroups,
     foreignKey: 'applicationUsers_id', // Customize the foreign key name for User model
     otherKey: 'careGroup_id', // Customize the foreign key name for Group model
     uniqueKey: 'my_custom_unique' 
@@ -48,15 +42,64 @@ db.user.belongsToMany(db.careGroup, {
 
 // In Group model
 db.careGroup.belongsToMany(db.user, {
-    through: db.applicationUser_careGroups,
+    through: db.applicationUsers_careGroups,
     foreignKey: 'careGroup_id', // Customize the foreign key name for Group model
     otherKey: 'applicationUsers_id', // Customize the foreign key name for User model
     uniqueKey: 'my_custom_unique' 
 });
 
+
+//many to many between application users and carehomes
+// In User model
+db.user.belongsToMany(db.careHome, {
+    through: db.applicationUsers_careHomes,
+    foreignKey: 'applicationUsers_id', // Customize the foreign key name for User model
+    otherKey: 'careHomes_id', // Customize the foreign key name for home model
+    uniqueKey: 'my_custom_unique_two' 
+});
+
+// In carehomes model
+db.careHome.belongsToMany(db.user, {
+    through: db.applicationUsers_careHomes,
+    foreignKey: 'careHomes_id', // Customize the foreign key name for hme model
+    otherKey: 'applicationUsers_id', // Customize the foreign key name for User model
+    uniqueKey: 'my_custom_unique_two' 
+});
+
+//many to many relationship between applicationUsers and applicationUserRole
+
+db.user.belongsToMany(db.applicationUserRoleModel, {
+    through: db.applicationUser_applicationUserRole,
+    foreignKey: 'applicationUsers_id', // Customize the foreign key name for User model
+    otherKey: 'applicationUsersRole_id', // Customize the foreign key name for home model
+    uniqueKey: 'my_custom_unique_two' 
+});
+
+// In carehomes model
+db.applicationUserRoleModel.belongsToMany(db.user, {
+    through: db.applicationUser_applicationUserRole,
+    foreignKey: 'applicationUsersRole_id', // Customize the foreign key name for hme model
+    otherKey: 'applicationUsers_id', // Customize the foreign key name for User model
+    uniqueKey: 'my_custom_unique_two' 
+});
+
+
+
+
+
 // db.user.hasOne(db.refreshToken)
 
 // db.refreshToken.belongsTo(db.user)
+
+db.user.hasMany(db.androidLicense, {
+    foreignKey: "applicationUsers_id"
+})
+
+db.androidLicense.belongsTo(db.user, {
+    foreignKey: "applicationUsers_id"
+})
+
+////////////////////////////
 
 db.careGroup.hasMany(db.careHome, {
     foreignKey: "careGroup_id"
